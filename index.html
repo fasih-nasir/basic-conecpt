@@ -2,3 +2,63 @@
      const filtered=data.filter((e)=>e.course === sel)
       setalldata(filtered);
 <!-- CATEOGERY   -->
+import React, { useEffect, useState } from 'react';
+import data from './data'; // Assuming 'data' is an array of objects with 'name' and 'course' properties
+
+export default function Home() {
+  var [sel, setsel] = useState("All");
+  var [alldata, setalldata] = useState(data);
+  var [searchTerm, setSearchTerm] = useState(""); // State for search input
+  var arr = ["All"];
+
+  // Collect unique courses
+  alldata.forEach((e) => {
+    if (!arr.includes(e.course)) {
+      arr.push(e.course);
+    }
+  });
+
+  useEffect(() => {
+    // Filter data based on selected course
+    let filtered = data;
+    if (sel !== "All") {
+      filtered = filtered.filter((e) => e.course === sel);
+    }
+    // Further filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter((e) => e.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    }
+    setalldata(filtered);
+  }, [sel, searchTerm]); // Update effect dependencies
+
+  return (
+    <>
+      <div>
+        {/* Dropdown for selecting category */}
+        <select className='border-2 w-52 p-2 m-2' onChange={(e) => setsel(e.target.value)} value={sel}>
+          {arr.map((e, index) => (
+            <option value={e} key={index}>{e}</option>
+          ))}
+        </select>
+
+        {/* Search input field */}
+        <input
+          type="text"
+          placeholder="Search by name"
+          className='border-2 w-52 p-2 m-2'
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {/* Display filtered data */}
+      {alldata.map((e, index) => (
+        <div className='card' key={index}>
+          <h1 className='text-2xl'>Name: {e.name}</h1>
+          <p>Class: {e.class}</p>
+          <p>Course: {e.course}</p>
+        </div>
+      ))}
+    </>
+  );
+}
